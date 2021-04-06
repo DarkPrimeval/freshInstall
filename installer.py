@@ -57,13 +57,16 @@ def ghidra_download():
         os.system('wget https://ghidra-sre.org/' + link)
         os.system('unzip ' + link + ' -d /opt/')
         os.system('rm -rf ' + link)
-
     
 def obsidian_download():
     url = "https://obsidian.md/download"
     pattern = "amd64.deb"
     link = website_downloader(pattern, url)
     os.system('wget ' + link + ' && dpkg -i obsidian* && rm -rf obsidian*')
+
+def vmware_download():
+    os.system('wget --user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" https://www.vmware.com/go/getplayer-linux')
+    os.system('chmod +x getplayer-linux && ./getplayer-linux && rm -rf getplayer-linux')
 
 def git_downloads():
     #SecLists
@@ -89,8 +92,18 @@ def nvidia_driver():
     with open("/etc/modprobe.d/blacklist-nouveau.conf", "w") as f:
         f.write("blacklist nouveau\nblacklist lbm-nouveau\noptions nouveau modeset=0\nalias nouveau off\nalias lbm-nouveau off")
 
-
 def reboot_system():
     os.system('shutdown -r now')
 
+apt_key_add()
+apt_update()
+nvidia_driver()
+apt_install()
+git_downloads()
+obsidian_download()
+ghidra_download()
+vmware_download()
+GEF_GDB()
 python_modules()
+docker_priv()
+enable_services()
