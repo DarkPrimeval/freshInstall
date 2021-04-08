@@ -26,8 +26,8 @@ def apt_install():
 
 def enable_services():
     for service in services:
-        os.system('systemctl start' + service)
-        os.system('systemctl enable' + service)
+        os.system('systemctl start ' + service)
+        os.system('systemctl enable ' + service)
 
 def docker_priv():
     os.system('gpasswd -a "${USER}" docker')
