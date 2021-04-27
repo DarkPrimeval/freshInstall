@@ -52,21 +52,21 @@ def ghidra_download():
     ghidraPath = '/opt/' + link[:-13]
     if os.path.isdir(ghidraPath):
         print("Deleting Old Ghidra Version")
-        os.system('rm -rf ' + ghidraPath)
-        os.system('wget %s %s' % (url, link))
-        os.system('unzip %s -d /opt/' % link)
-        os.system('rm -rf %s' % link)
+        os.system('sudo rm -rf %s' % ghidraPath)
+        os.system('sudo wget %s %s' % (url, link))
+        os.system('sudo unzip %s -d /opt/' % link)
+        os.system('sudo rm -rf %s' % link)
     else:
-        os.system('wget https://ghidra-sre.org/' + link)
-        os.system('unzip %s -d /opt/' % link)
-        os.system('rm -rf %s' % link)
+        os.system('sudo wget https://ghidra-sre.org/' + link)
+        os.system('sudo unzip %s -d /opt/' % link)
+        os.system('sudo rm -rf %s' % link)
 
 #Download and instlal latest obsidian version.    
 def obsidian_download():
     url = "https://obsidian.md/download"
     pattern = "amd64.deb"
     link = website_downloader(pattern, url)
-    os.system('wget %s && dpkg -i obsidian* && rm -rf obsidian*' % link)
+    os.system('wget %s && sudo dpkg -i obsidian* && rm -rf obsidian*' % link)
 
 
 #Download and install latest VMWare
@@ -90,7 +90,7 @@ def git_downloads():
         os.system('git clone https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite /opt/peass')
 
 def GEF_GDB():
-    os.system('wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh')
+    os.system('wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | bash')
 
 def python_modules():
     for module in modules:
@@ -105,44 +105,70 @@ def reboot_system():
 
 choice = True
 while choice:
-    print("""
-    1. apt_update
-    2. apt_install
-    3. nvidia_driver
-    4. git_downloads
-    5. obsidian_download
-    6. ghidra_download
-    7. vmware_download
-    8. GEF_GDB
-    9. python_modules
-    """)
-    #options = {"6": ghidra_download()}
-    commands = list()
-    choice = str(input("Please enter the numbers delimited by a , (IE 1,3,5) or type \"all\" for everything or use -# (IE -7) to skip an install: "))
-    if choice.lower == "all":  
-        apt_update()
-        apt_install()
-        docker_install()
-        nvidia_driver()
-        git_downloads()
-        obsidian_download()
-        ghidra_download()
-        vmware_download()
-        GEF_GDB()
-        python_modules()
-    elif "-" in choice:
-        for i in range(1, 10):
-            if str(i) in choice:
-                pass
-            else:
+    try:
+        
+        print("""
+        1. apt_update
+        2. apt_install
+        3. docker_install
+        4. nvidia_driver
+        5. git_downloads
+        6. obsidian_download
+        7. ghidra_download
+        8. vmware_download
+        9. GEF_GDB
+        10. python_modules
+        """)
+        commands = list()
+        choice = str(input("Please enter the numbers delimited by a , (IE 1,3,5) or type \"all\" for everything or use -# (IE -7) to skip an install: "))
+
+        if choice.lower == "all":  
+            apt_update()
+            apt_install()
+            docker_install()
+            nvidia_driver()
+            git_downloads()
+            obsidian_download()
+            ghidra_download()
+            vmware_download()
+            GEF_GDB()
+            python_modules()
+        elif "-" in choice:
+            for i in range(1, 10):
+                if str(i) in choice:
+                    pass
+                else:
+                    commands.append(i)
+            pass
+        elif "," in choice or len(choice) == 1:
+            for i in choice.split(","):
                 commands.append(i)
-        pass
-    elif "," in choice:
-        for i in choice.split(","):
-            commands.append(i)
-    elif choice == "exit":
-        break
-    else:
-        print("Invalid Options")
-    for str(i) in commands:
-        if i == "1"
+        elif choice == "exit":
+            break
+        else:
+            print("Invalid Options")
+        for i in commands:
+            print(type(i))
+            i = str(i)
+            if i == "1":
+                apt_update()
+            if i == "2":
+                apt_install()
+            if i == "3":
+                docker_install()
+            if i == "4":
+                nvidia_driver()
+            if i == "5":
+                git_downloads()
+            if i == "6":
+                obsidian_download()
+            if i == "7":
+                ghidra_download()
+            if i == "8":
+                vmware_download()
+            if i == "9":
+                GEF_GDB()
+            if i == "10":
+                python_modules()
+    except:
+        print("Error")
