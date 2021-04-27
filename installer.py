@@ -116,7 +116,8 @@ while choice:
     8. GEF_GDB
     9. python_modules
     """)
-    options = {"6": ghidra_download()}
+    #options = {"6": ghidra_download()}
+    commands = list()
     choice = str(input("Please enter the numbers delimited by a , (IE 1,3,5) or type \"all\" for everything or use -# (IE -7) to skip an install: "))
     if choice.lower == "all":  
         apt_update()
@@ -134,15 +135,14 @@ while choice:
             if str(i) in choice:
                 pass
             else:
-                print(i)
+                commands.append(i)
         pass
     elif "," in choice:
-        if "6" in choice:
-            a = options['6']
-    elif choice == "7":
-        options[0] + "()"
+        for i in choice.split(","):
+            commands.append(i)
     elif choice == "exit":
         break
     else:
         print("Invalid Options")
-
+    for str(i) in commands:
+        if i == "1"
