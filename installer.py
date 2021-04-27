@@ -5,33 +5,34 @@ from bs4 import BeautifulSoup
 
 #Install these packages
 tool_packages = ['rlwrap', 'xclip', 'ffuf', 'radare2', 'obs-studio']
-functional_packages = ['ocl-icd-libopencl1', 'nvidia-cuda-toolkit', 'nvidia-driver', 'apt-transport-https', 'software-properties-common', 'ca-certificates', 'docker-ce']
+functional_packages = ['ocl-icd-libopencl1', 'nvidia-cuda-toolkit', 'nvidia-driver' ]
 packages = tool_packages + functional_packages
-services = ['docker']
 modules = ['pwn']
+docker_packages = ['curl', 'apt-transport-https', 'software-properties-common', 'ca-certificates', 'docker-ce']
 
-def apt_key_add():
-    os.system('add-apt-repository ppa:obsproject/obs-studio')
-    os.system('curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -')
-    os.system('echo "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable" | tee /etc/apt/sources.list.d/docker-engi')
+#Install docker
+def docker_install():   
+    os.system('sudo curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -')
+    os.system('sudo echo "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable" | tee /etc/apt/sources.list.d/docker-engi')
+    apt_update()
+    for package in docker_packages:
+        os.system('sudo apt-get install %s -y' % package)
+    os.system('sudo systemctl enable docker.service')
+    os.system('sudo systemctl start docker.service')
+    os.system('sudo gpasswd -a "${USER}" docker')
 
+#Update the OS
 def apt_update():
-    os.system('apt-get update')
-    os.system('apt-get full-upgrade -y')
+    os.system('sudo apt-get update')
+    os.system('sudo apt-get full-upgrade -y')
 
+#Install packages listed above.
 def apt_install():
     apt_update()
     for package in packages:
-        os.system('apt-get install ' + package + ' -y')
+        os.system('sudo apt-get install %s -y' % package)
 
-def enable_services():
-    for service in services:
-        os.system('systemctl start ' + service)
-        os.system('systemctl enable ' + service)
-
-def docker_priv():
-    os.system('gpasswd -a "${USER}" docker')
-
+#Download function
 def website_downloader(pattern, url):
     r = requests.get(url)
     data = r.text
@@ -42,6 +43,8 @@ def website_downloader(pattern, url):
         else:
             continue
 
+
+#Download and install latest ghidra version.
 def ghidra_download():
     url = "https://ghidra-sre.org/"
     pattern = "PUBLIC"
@@ -50,24 +53,29 @@ def ghidra_download():
     if os.path.isdir(ghidraPath):
         print("Deleting Old Ghidra Version")
         os.system('rm -rf ' + ghidraPath)
-        os.system('wget '+ url + link)
-        os.system('unzip ' + link + ' -d /opt/')
-        os.system('rm -rf ' + link)
+        os.system('wget %s %s' % (url, link))
+        os.system('unzip %s -d /opt/' % link)
+        os.system('rm -rf %s' % link)
     else:
         os.system('wget https://ghidra-sre.org/' + link)
-        os.system('unzip ' + link + ' -d /opt/')
-        os.system('rm -rf ' + link)
-    
+        os.system('unzip %s -d /opt/' % link)
+        os.system('rm -rf %s' % link)
+
+#Download and instlal latest obsidian version.    
 def obsidian_download():
     url = "https://obsidian.md/download"
     pattern = "amd64.deb"
     link = website_downloader(pattern, url)
-    os.system('wget ' + link + ' && dpkg -i obsidian* && rm -rf obsidian*')
+    os.system('wget %s && dpkg -i obsidian* && rm -rf obsidian*' % link)
 
+
+#Download and install latest VMWare
 def vmware_download():
     os.system('wget --user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" https://www.vmware.com/go/getplayer-linux')
     os.system('chmod +x getplayer-linux && ./getplayer-linux && rm -rf getplayer-linux')
 
+
+#GitHub.com Downloads
 def git_downloads():
     #SecLists
     if os.path.isdir("/opt/seclists"):
@@ -86,7 +94,7 @@ def GEF_GDB():
 
 def python_modules():
     for module in modules:
-        os.system('echo pip3 install ' + module)
+        os.system('pip3 install %s' % module)
 
 def nvidia_driver():
     with open("/etc/modprobe.d/blacklist-nouveau.conf", "w") as f:
@@ -95,15 +103,46 @@ def nvidia_driver():
 def reboot_system():
     os.system('shutdown -r now')
 
-apt_key_add()
-apt_update()
-nvidia_driver()
-apt_install()
-git_downloads()
-obsidian_download()
-ghidra_download()
-vmware_download()
-GEF_GDB()
-python_modules()
-docker_priv()
-enable_services()
+choice = True
+while choice:
+    print("""
+    1. apt_update
+    2. apt_install
+    3. nvidia_driver
+    4. git_downloads
+    5. obsidian_download
+    6. ghidra_download
+    7. vmware_download
+    8. GEF_GDB
+    9. python_modules
+    """)
+    options = {"6": ghidra_download()}
+    choice = str(input("Please enter the numbers delimited by a , (IE 1,3,5) or type \"all\" for everything or use -# (IE -7) to skip an install: "))
+    if choice.lower == "all":  
+        apt_update()
+        apt_install()
+        docker_install()
+        nvidia_driver()
+        git_downloads()
+        obsidian_download()
+        ghidra_download()
+        vmware_download()
+        GEF_GDB()
+        python_modules()
+    elif "-" in choice:
+        for i in range(1, 10):
+            if str(i) in choice:
+                pass
+            else:
+                print(i)
+        pass
+    elif "," in choice:
+        if "6" in choice:
+            a = options['6']
+    elif choice == "7":
+        options[0] + "()"
+    elif choice == "exit":
+        break
+    else:
+        print("Invalid Options")
+
