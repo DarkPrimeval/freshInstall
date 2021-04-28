@@ -8,12 +8,10 @@ tool_packages = ['rlwrap', 'xclip', 'ffuf', 'radare2', 'obs-studio']
 functional_packages = ['ocl-icd-libopencl1', 'nvidia-cuda-toolkit', 'nvidia-driver' ]
 packages = tool_packages + functional_packages
 modules = ['pwn']
-docker_packages = ['curl', 'apt-transport-https', 'software-properties-common', 'ca-certificates', 'docker-ce']
+docker_packages = ['curl', 'apt-transport-https', 'software-properties-common', 'ca-certificates', 'docker.io']
 
 #Install docker
 def docker_install():   
-    os.system('sudo curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -')
-    os.system('sudo echo "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable" | tee /etc/apt/sources.list.d/docker-engi')
     apt_update()
     for package in docker_packages:
         os.system('sudo apt-get install %s -y' % package)
