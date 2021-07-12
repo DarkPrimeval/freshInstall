@@ -69,8 +69,9 @@ def obsidian_download():
 
 #Download and install latest VMWare
 def vmware_download():
-    os.system('wget --user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" https://www.vmware.com/go/getplayer-linux')
-    os.system('chmod +x getplayer-linux && ./getplayer-linux && rm -rf getplayer-linux')
+    os.system('wget --user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" https://www.vmware.com/go/getworkstation-linux')
+    os.system('chmod +x getworkstation-linux && ./getworkstation-linux && rm -rf getworkstation-linux')
+
 
 
 #GitHub.com Downloads
