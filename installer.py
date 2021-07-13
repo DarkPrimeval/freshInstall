@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 #Install these packages
-tool_packages = ['rlwrap', 'xclip', 'ffuf', 'radare2', 'obs-studio']
+tool_packages = ['rlwrap', 'xclip', 'ffuf', 'radare2', 'obs-studio', 'exploitdb']
 functional_packages = ['ocl-icd-libopencl1', 'nvidia-cuda-toolkit', 'nvidia-driver' ]
 packages = tool_packages + functional_packages
 modules = ['pwn']
